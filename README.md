@@ -43,6 +43,3 @@ cd infrastructure/terraform
 terraform init
 terraform apply
 ```
-
-## Documentation
-Check out the `Documentation.md`, `Plan.md`, and `Implementation.md` to see the roadmap of how the hackathon proceeded.
