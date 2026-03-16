@@ -59,7 +59,8 @@
             "deploymentTarget": "15.1"
           }
         }
-      ]
+      ],
+      "@speechmatics/expo-two-way-audio"
     ],
     "web": {
       "bundler": "metro",

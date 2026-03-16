@@ -77,7 +77,16 @@ export default function CookingScreen({ route, navigation }) {
     if (isConnected) {
       wsService.current.disconnect();
     } else {
-      wsService.current.connect(WS_URL);
+      const url = WS_URL || 'wss://api.cookalong.app/ws';
+      if (!url || !url.startsWith('ws')) {
+        Alert.alert("Error", "WebSocket URL is not configured. Set EXPO_PUBLIC_WS_URL in your environment.");
+        return;
+      }
+      try {
+        wsService.current.connect(url);
+      } catch (e) {
+        Alert.alert("Connection Error", e?.message || "Could not connect. Check your backend URL and try again.");
+      }
     }
   };
 
@@ -200,13 +209,23 @@ export default function CookingScreen({ route, navigation }) {
         {/* Middle Area: AR Overlay */}
         <View style={styles.arOverlayContainer}>
            {currentStep ? (
-             <BlurView intensity={20} tint="dark" style={styles.arCard}>
-               <View style={styles.arHeader}>
-                  <MaterialIcons name="restaurant-menu" size={20} color={Theme.colors.success} />
-                  <Text style={styles.arStepText}>Step {currentStep.stepNum}</Text>
+             (Platform.OS === 'android' ? (
+               <View style={[styles.arCard, { backgroundColor: 'rgba(0,0,0,0.6)' }]}>
+                 <View style={styles.arHeader}>
+                    <MaterialIcons name="restaurant-menu" size={20} color={Theme.colors.success} />
+                    <Text style={styles.arStepText}>Step {currentStep.stepNum}</Text>
+                 </View>
+                 <Text style={styles.arInstruction}>{currentStep.instruction}</Text>
                </View>
-               <Text style={styles.arInstruction}>{currentStep.instruction}</Text>
-             </BlurView>
+             ) : (
+               <BlurView intensity={20} tint="dark" style={styles.arCard}>
+                 <View style={styles.arHeader}>
+                    <MaterialIcons name="restaurant-menu" size={20} color={Theme.colors.success} />
+                    <Text style={styles.arStepText}>Step {currentStep.stepNum}</Text>
+                 </View>
+                 <Text style={styles.arInstruction}>{currentStep.instruction}</Text>
+               </BlurView>
+             ))
            ) : (
                <View style={[styles.arCard, { backgroundColor: 'transparent', borderWidth: 0 }]} />
            )}

@@ -29,13 +29,16 @@ export class WebSocketService {
         };
 
         this.ws.onmessage = async (event) => {
-            // Receive binary audio chunks or JSON agent states
-            let data = event.data;
-            if (data instanceof Blob) {
-                data = await data.arrayBuffer();
-            }
-            if (this.onMessage) {
-               this.onMessage(data);
+            try {
+                let data = event.data;
+                if (data instanceof Blob && typeof data.arrayBuffer === 'function') {
+                    data = await data.arrayBuffer();
+                }
+                if (this.onMessage && data != null) {
+                    this.onMessage(data);
+                }
+            } catch (e) {
+                console.error("WebSocket message error:", e);
             }
         };
     }
