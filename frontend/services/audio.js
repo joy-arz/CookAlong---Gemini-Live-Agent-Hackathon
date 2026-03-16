@@ -12,12 +12,6 @@ if (!IS_WEB) {
   } catch (e) {
     console.warn('react-native-live-audio-stream not available:', e.message);
   }
-  try {
-    const twoWay = require('@speechmatics/expo-two-way-audio');
-    playPCMDataNative = twoWay.playPCMData;
-  } catch (e) {
-    console.warn('expo-two-way-audio not available for playback:', e.message);
-  }
 }
 
 export class AudioService {
