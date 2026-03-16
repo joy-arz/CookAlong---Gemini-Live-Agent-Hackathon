@@ -13,14 +13,14 @@ This document provides step-by-step instructions on how to build and spin up the
 ## 1. Backend Spin-Up (FastAPI)
 
 The backend handles the Gemini Live API WebSockets, Firestore Database connections, and JWT Authentication.
-
+ 
 ### Step 1: Create a Virtual Environment
 ```bash
 cd backend
 python3 -m venv env
 source env/bin/activate  # On Windows use: env\Scripts\activate
 ```
-
+ 
 ### Step 2: Install Dependencies
 ```bash
 pip install -r requirements.txt
@@ -35,11 +35,15 @@ export JWT_SECRET_KEY="your_secure_random_string_for_auth"
 ```
 
 ### Step 4: Run the Server
-Use `uvicorn` to start the FastAPI server:
+Run from the **project root**:
 ```bash
 python -m backend.app.main
 ```
-The server should now be running at `http://localhost:8080`.
+Or from `backend/`:
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8080
+```
+The server starts at `http://localhost:8080`.
 
 ---
 
@@ -50,7 +54,7 @@ The frontend is a universal React Native application powered by Expo. It's confi
 ### Step 1: Install Node Modules
 ```bash
 cd frontend
-pnpm install
+npm install
 ```
 
 ### Step 2: Configure Environment Variables
@@ -62,7 +66,7 @@ EXPO_PUBLIC_WS_URL=ws://localhost:8080/ws
 
 ### Step 3: Start the Web Development Server
 ```bash
-pnpm web
+npm run web
 ```
 
 Alternatively, to serve a production web build:
@@ -82,10 +86,13 @@ To build the app for native iOS and Android environments:
 npm install -g eas-cli
 ```
 
-### Step 2: Login and Configure
+### Step 2: Login and Link Project
 ```bash
 eas login
+cd frontend
+eas init
 ```
+Choose **Create a new project** when prompted (this sets `projectId` in `app.json`).
 
 ### Step 3: Build for Development or Preview
 Create a development build:
@@ -101,11 +108,8 @@ eas build --profile preview --platform all
 ---
 
 ### Usage Instructions
-Open your browser to `http://localhost:8081` (or whichever port Expo selects).
-1. Create a new account using the "Create Account" button.
-2. Sign in with your new credentials.
-3. Import a recipe by pasting a recipe URL (e.g., from a food blog) into the importer text box.
-4. Select your recipe to load the immersive "Cooking Screen".
-5. Allow Camera and Microphone permissions when prompted.
-6. Tap the "Connect" icon in the top right to open the BIDI websocket.
-7. Tap "Start Cooking" to begin interacting with the AI coach!
+Open your browser to `http://localhost:8081` (or whichever port Expo selects). The app starts on the Dashboard by default.
+1. Use **Start Quick Cook**: Paste a recipe URL, or type a dish name (e.g. "Spaghetti Carbonara") and tap Start.
+2. Or select a recipe from the Recommended list and tap to open the Cooking Screen.
+3. Allow Camera and Microphone permissions when prompted.
+4. Tap the **Connect** icon, then **Start Cooking** to interact with the AI coach.

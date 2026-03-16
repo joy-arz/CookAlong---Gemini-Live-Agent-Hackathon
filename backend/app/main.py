@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .websockets import router as websockets_router
 from .routers.auth import router as auth_router
 from .routers.recipes import router as recipes_router
-
+ 
 app = FastAPI(title="CookAlong Agent Backend")
 
 # Allow CORS for frontend
@@ -25,4 +25,5 @@ def read_root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run(app, host="0.0.0.0", port=port)
