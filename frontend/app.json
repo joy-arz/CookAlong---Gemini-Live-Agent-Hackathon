@@ -16,7 +16,8 @@
       "bundleIdentifier": "com.cookalong.app",
       "infoPlist": {
         "NSCameraUsageDescription": "Allow CookAlong to use your camera for live cooking guidance.",
-        "NSMicrophoneUsageDescription": "Allow CookAlong to use your microphone to speak with the AI."
+        "NSMicrophoneUsageDescription": "Allow CookAlong to use your microphone to speak with the AI.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -29,7 +30,10 @@
       "package": "com.cookalong.app",
       "permissions": [
         "CAMERA",
-        "RECORD_AUDIO"
+        "RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ]
     },
     "plugins": [
@@ -63,8 +67,12 @@
     },
     "extra": {
       "eas": {
-        "projectId": "00000000-0000-0000-0000-000000000000"
+        "projectId": "707685e5-095c-49ff-a1ac-a70362017818"
       }
-    }
+    },
+    "owner": "joyarz"
+  },
+  "extra": {
+    "eas": {}
   }
 }
