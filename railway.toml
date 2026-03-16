@@ -1,0 +1,4 @@
+# Railway build config - uses Dockerfile at repo root
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
