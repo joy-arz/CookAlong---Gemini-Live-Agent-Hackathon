@@ -69,24 +69,29 @@ def get_recipe_step(recipe_id: str, step_num: int) -> str:
 @lru_cache()
 def get_substitution(ingredient: str) -> str:
     """Gets substitutions for a given ingredient."""
-    ingredient_lower = ingredient.lower()
+    ingredient_lower = ingredient.lower().strip()
     try:
         if db:
-            docs = db.collection("substitutions").where("name", "==", ingredient_lower.capitalize()).stream()
+            # Firestore doesn't support case-insensitive querying easily.
+            # We'll fetch all and do a simple fuzzy match locally for now,
+            # or rely on a normalized "search_name" field if one existed.
+            docs = db.collection("substitutions").stream()
             for doc in docs:
                 data = doc.to_dict()
-                alts = ", ".join(data.get("alternatives", []))
-                notes = data.get("notes", "")
-                return f"Substitutions for {ingredient}: {alts}. Notes: {notes}"
+                name = data.get("name", "").lower()
+                if ingredient_lower in name or name in ingredient_lower:
+                    alts = ", ".join(data.get("alternatives", []))
+                    notes = data.get("notes", "")
+                    return f"Substitutions for {data.get('name')}: {alts}. Notes: {notes}"
     except Exception as e:
         print(f"Firestore error: {e}")
 
     # Fallback to mock
-    sub = MOCK_SUBSTITUTIONS.get(ingredient_lower)
-    if sub:
-        alts = ", ".join(sub.get("alternatives", []))
-        notes = sub.get("notes", "")
-        return f"Substitutions for {ingredient}: {alts}. Notes: {notes}"
+    for key, sub in MOCK_SUBSTITUTIONS.items():
+        if ingredient_lower in key or key in ingredient_lower:
+            alts = ", ".join(sub.get("alternatives", []))
+            notes = sub.get("notes", "")
+            return f"Substitutions for {sub.get('name')}: {alts}. Notes: {notes}"
 
     return f"I don't have any specific substitutions listed for {ingredient}, but you could try looking it up."
 

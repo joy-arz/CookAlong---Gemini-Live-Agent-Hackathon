@@ -37,7 +37,7 @@ export JWT_SECRET_KEY="your_secure_random_string_for_auth"
 ### Step 4: Run the Server
 Use `uvicorn` to start the FastAPI server:
 ```bash
-python -m uvicorn app.main:app --port 8080 --reload
+python -m backend.app.main
 ```
 The server should now be running at `http://localhost:8080`.
 
@@ -50,12 +50,19 @@ The frontend is a universal React Native application powered by Expo. It's confi
 ### Step 1: Install Node Modules
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
 
-### Step 2: Start the Web Development Server
+### Step 2: Configure Environment Variables
+Create a `.env.development` file in the `frontend` directory for local development:
+```env
+EXPO_PUBLIC_API_URL=http://localhost:8080
+EXPO_PUBLIC_WS_URL=ws://localhost:8080/ws
+```
+
+### Step 3: Start the Web Development Server
 ```bash
-npm run web
+pnpm web
 ```
 
 Alternatively, to serve a production web build:
@@ -64,7 +71,36 @@ npx expo export --platform web
 npx serve dist -p 3000
 ```
 
-### Step 3: Use the App
+---
+
+## 3. Expo Preview and EAS Build
+
+To build the app for native iOS and Android environments:
+
+### Step 1: Install EAS CLI
+```bash
+npm install -g eas-cli
+```
+
+### Step 2: Login and Configure
+```bash
+eas login
+```
+
+### Step 3: Build for Development or Preview
+Create a development build:
+```bash
+eas build --profile development --platform all
+```
+
+Create a preview build:
+```bash
+eas build --profile preview --platform all
+```
+
+---
+
+### Usage Instructions
 Open your browser to `http://localhost:8081` (or whichever port Expo selects).
 1. Create a new account using the "Create Account" button.
 2. Sign in with your new credentials.

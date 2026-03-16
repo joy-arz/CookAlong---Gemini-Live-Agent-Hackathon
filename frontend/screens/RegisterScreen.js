@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, SafeAreaView, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
-
-const API_URL = 'https://api.cookalong.app';
+import { API_URL } from '../config';
 
 export default function RegisterScreen({ navigation }) {
     const [username, setUsername] = useState('');

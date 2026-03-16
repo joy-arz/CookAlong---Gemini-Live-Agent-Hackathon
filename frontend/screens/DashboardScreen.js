@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, SafeAreaView, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-
-const API_URL = 'https://api.cookalong.app';
+import { API_URL } from '../config';
 
 export default function DashboardScreen({ route, navigation }) {
     const { token } = route.params;

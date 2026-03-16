@@ -31,5 +31,8 @@
     "react-native-web": "^0.21.0",
     "react-native-webrtc": "^124.0.7"
   },
+  "devDependencies": {
+    "expo-build-properties": "~0.13.0"
+  },
   "private": true
 }

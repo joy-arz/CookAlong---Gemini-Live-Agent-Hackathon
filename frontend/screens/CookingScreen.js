@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { WebSocketService } from '../services/websocket';
 import { AudioService } from '../services/audio';
 import { Theme } from '../theme';
+import { WS_URL } from '../config';
 
 export default function CookingScreen({ route, navigation }) {
   const passedRecipeId = route?.params?.recipeId || "spaghetti-carbonara";
@@ -19,10 +20,12 @@ export default function CookingScreen({ route, navigation }) {
   const [agentState, setAgentState] = useState("disconnected");
   const [recipeId, setRecipeId] = useState(passedRecipeId);
   const [isMuted, setIsMuted] = useState(false);
+  const [currentStep, setCurrentStep] = useState(null);
 
   const cameraRef = useRef(null);
   const wsService = useRef(new WebSocketService());
   const audioService = useRef(new AudioService(wsService.current));
+  const visionIntervalRef = useRef(null);
 
   // Hide the standard navigation header for this screen to make it immersive
   useEffect(() => {
@@ -50,6 +53,11 @@ export default function CookingScreen({ route, navigation }) {
                    audioService.current.clearPlaybackBuffer();
                } else if (parsed.type === 'agent_state') {
                    setAgentState(parsed.state);
+               } else if (parsed.type === 'recipe_step') {
+                   setCurrentStep({
+                       stepNum: parsed.step_num,
+                       instruction: parsed.instruction
+                   });
                }
            } catch(e) {
                console.error("Error parsing message", e);
@@ -59,6 +67,9 @@ export default function CookingScreen({ route, navigation }) {
     return () => {
       ws.disconnect();
       audioService.current.stopRecording();
+      if (visionIntervalRef.current) {
+         clearInterval(visionIntervalRef.current);
+      }
     };
   }, []);
 
@@ -66,7 +77,7 @@ export default function CookingScreen({ route, navigation }) {
     if (isConnected) {
       wsService.current.disconnect();
     } else {
-      wsService.current.connect('wss://api.cookalong.app/ws');
+      wsService.current.connect(WS_URL);
     }
   };
 
@@ -81,6 +92,10 @@ export default function CookingScreen({ route, navigation }) {
       setIsSessionActive(false);
       setAgentState("disconnected");
       audioService.current.stopRecording();
+      if (visionIntervalRef.current) {
+          clearInterval(visionIntervalRef.current);
+          visionIntervalRef.current = null;
+      }
     } else {
       wsService.current.sendControlMessage('start_session', recipeId);
       setIsSessionActive(true);
@@ -91,9 +106,11 @@ export default function CookingScreen({ route, navigation }) {
   };
 
   const startVisionLoop = () => {
-    const interval = setInterval(async () => {
-       if (!isSessionActive || !cameraRef.current) {
-           clearInterval(interval);
+    if (visionIntervalRef.current) {
+      clearInterval(visionIntervalRef.current);
+    }
+    visionIntervalRef.current = setInterval(async () => {
+       if (!cameraRef.current) {
            return;
        }
        try {
@@ -182,22 +199,17 @@ export default function CookingScreen({ route, navigation }) {
 
         {/* Middle Area: AR Overlay */}
         <View style={styles.arOverlayContainer}>
-           <BlurView intensity={20} tint="dark" style={styles.arCard}>
-             <View style={styles.arHeader}>
-                <MaterialIcons name="restaurant-menu" size={20} color={Theme.colors.success} />
-                <Text style={styles.arStepText}>Step 3 of 8</Text>
-             </View>
-             <Text style={styles.arInstruction}>Dice the onions finely and mince the garlic cloves.</Text>
-
-             <View style={styles.ingredientsList}>
-               <View style={styles.ingredientBadge}>
-                 <Text style={styles.ingredientText}>1 Medium Onion</Text>
+           {currentStep ? (
+             <BlurView intensity={20} tint="dark" style={styles.arCard}>
+               <View style={styles.arHeader}>
+                  <MaterialIcons name="restaurant-menu" size={20} color={Theme.colors.success} />
+                  <Text style={styles.arStepText}>Step {currentStep.stepNum}</Text>
                </View>
-               <View style={styles.ingredientBadge}>
-                 <Text style={styles.ingredientText}>2 Garlic Cloves</Text>
-               </View>
-             </View>
-           </BlurView>
+               <Text style={styles.arInstruction}>{currentStep.instruction}</Text>
+             </BlurView>
+           ) : (
+               <View style={[styles.arCard, { backgroundColor: 'transparent', borderWidth: 0 }]} />
+           )}
         </View>
 
         {/* Bottom Area: Subtitles and Controls */}

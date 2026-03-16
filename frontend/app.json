@@ -13,7 +13,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.cookalong.app"
+      "bundleIdentifier": "com.cookalong.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow CookAlong to use your camera for live cooking guidance.",
+        "NSMicrophoneUsageDescription": "Allow CookAlong to use your microphone to speak with the AI."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,8 +26,37 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.cookalong.app"
+      "package": "com.cookalong.app",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO"
+      ]
     },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow CookAlong to access your camera."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow CookAlong to access your microphone."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ]
+    ],
     "web": {
       "bundler": "metro",
       "favicon": "./assets/favicon.png"

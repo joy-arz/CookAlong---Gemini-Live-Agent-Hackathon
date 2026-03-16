@@ -74,6 +74,20 @@ async def websocket_endpoint(websocket: WebSocket):
                             # get_recipe_step expects (recipe_id, step_num)
                             # args could be parsed, let's assume dict
                             result = get_recipe_step(args.get("recipe_id"), args.get("step_num"))
+
+                            # Stream the step to the frontend for the AR overlay
+                            try:
+                                step_num = args.get("step_num")
+                                if step_num is not None:
+                                    step_data = {
+                                        "type": "recipe_step",
+                                        "step_num": step_num + 1,  # 1-based index for UI
+                                        "instruction": result
+                                    }
+                                    await websocket.send_text(json.dumps(step_data))
+                            except Exception as e:
+                                print(f"Error sending step data: {e}")
+
                         elif name == "get_substitution":
                             result = get_substitution(args.get("ingredient"))
 

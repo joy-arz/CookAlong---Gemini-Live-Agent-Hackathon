@@ -29,8 +29,18 @@ The frontend uses Expo and React Native Web.
 
 ```bash
 cd frontend
-npm install
-npm run web
+pnpm install
+```
+
+Configure your environment variables in `.env.development`:
+```env
+EXPO_PUBLIC_API_URL=http://localhost:8080
+EXPO_PUBLIC_WS_URL=ws://localhost:8080/ws
+```
+
+Then start the server:
+```bash
+pnpm web
 ```
 
 This will launch a local server on `http://localhost:8081` (or next available port). Load the site, allow microphone and camera access, and click 'Connect Server' and 'Start Cooking'.
@@ -43,3 +53,6 @@ cd infrastructure/terraform
 terraform init
 terraform apply
 ```
+
+## Documentation
+Check out the `Documentation.md`, `Plan.md`, and `Implementation.md` to see the roadmap of how the hackathon proceeded.

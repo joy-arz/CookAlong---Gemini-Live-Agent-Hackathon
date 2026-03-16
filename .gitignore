@@ -1,26 +1,6 @@
-# Documentation (internal/private)
-Documentation/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
 venv/
-.venv/
-
-# Environment
+__pycache__/
+*.pyc
 .env
-.env.local
-
-# IDE
-.idea/
-.vscode/
-
-# OS
-.DS_Store
-
-# Logs
+.env.*
 *.log
